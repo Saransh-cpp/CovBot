@@ -13,7 +13,40 @@ auth.set_access_token(access_token, access_token_secret)
 
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
-for tweet in tweepy.Cursor(api.search, q='Covid').items(5):
+FILE_NAME = "lastSeenId.txt"
+
+
+def retrieve_last_seen_id(file_name):
+    f_read = open(file_name, "r")
+    last_seen_id = int(f_read.read().strip())
+    f_read.close()
+    return last_seen_id
+
+
+def store_last_seen_id(last_seen_id, file_name):
+    f_write = open(file_name, "w")
+    f_write.write(str(last_seen_id))
+    f_write.close()
+    return
+
+
+def reply_to_tweet():
+    print("replying...")
+    last_seen_id = retrieve_last_seen_id(FILE_NAME)
+
+    mention = api.mentions_timeline(last_seen_id, tweet_mode="extended")
+
+    for singleMention in reversed(mention):
+        print(
+            str(singleMention.id) + " - " + singleMention.full_text
+        )  # printing all my tweets
+        last_seen_id = singleMention.id
+        store_last_seen_id(last_seen_id, FILE_NAME)
+        singleMention.retweet()
+
+reply_to_tweet()
+
+for tweet in tweepy.Cursor(api.search, q='Covid').items(50000):
     try:
         print('\nFound by @' + tweet.user.screen_name)
 
@@ -24,6 +57,3 @@ for tweet in tweepy.Cursor(api.search, q='Covid').items(5):
 
     except tweepy.TweepError as error:
         print(error.reason)
-
-    except StopIteration:
-        break

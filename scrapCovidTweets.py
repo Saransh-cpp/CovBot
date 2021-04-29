@@ -20,19 +20,12 @@ api = tweepy.API(
 FILE_NAME = "lastSeenId.txt"
 
 keywords = [
-    "help",
     "hospital",
     "bed",
     "oxygen",
-    "delhi",
-    "mumbai",
-    "bangalore",
-    "chennai",
-    "noida",
     "icu",
     "cylinder",
     "urgent",
-    "india",
     "required",
     "available",
     "ventilator",

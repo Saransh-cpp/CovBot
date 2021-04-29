@@ -21,7 +21,6 @@ FILE_NAME = "lastSeenId.txt"
 
 keywords = [
     "help",
-    "vaccination",
     "hospital",
     "bed",
     "oxygen",
@@ -30,8 +29,6 @@ keywords = [
     "bangalore",
     "chennai",
     "noida",
-    "food",
-    "medicine",
     "icu",
     "cylinder",
     "urgent",
@@ -52,8 +49,8 @@ keywords = [
     "ab-",
     "blood",
     "donate",
-    "vaccines",
-    "covidsos"
+    "covidsos",
+    "concentrator"
 ]
 
 
@@ -88,7 +85,7 @@ def reply_to_tweet():
 
 reply_to_tweet()
 
-for tweet in tweepy.Cursor(api.search, q="covid -filter:retweets").items(50000):
+for tweet in tweepy.Cursor(api.search, q="covid -filter:retweets", lang='en').items(50000):
     tweet_text = tweet._json['text']
     found = True
     try:
@@ -96,12 +93,12 @@ for tweet in tweepy.Cursor(api.search, q="covid -filter:retweets").items(50000):
             if found:
                 if keyword in tweet_text.lower():
                     found = False
-                    print("\nFound by @" + tweet.user.screen_name + tweet_text)
+                    print("\nFound by @" + tweet.user.screen_name + " " + tweet_text)
 
                     # tweet.retweet()
                     print("Retweeted")
 
-                    time.sleep(1)
+                    time.sleep(300)
 
     except tweepy.TweepError as error:
         print(error.reason)

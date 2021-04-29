@@ -11,9 +11,50 @@ consumer_secret = Keys.CONSUMER_SECRET
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 
-api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+api = tweepy.API(
+    auth, 
+    # wait_on_rate_limit=True, 
+    # wait_on_rate_limit_notify=True
+    )
 
 FILE_NAME = "lastSeenId.txt"
+
+keywords = [
+    "help",
+    "vaccination",
+    "hospital",
+    "bed",
+    "oxygen",
+    "delhi",
+    "mumbai",
+    "bangalore",
+    "chennai",
+    "noida",
+    "food",
+    "medicine",
+    "icu",
+    "cylinder",
+    "urgent",
+    "india",
+    "required",
+    "available",
+    "ventilator",
+    "langar",
+    "remdesivir",
+    "plasma",
+    "o+",
+    "a+",
+    "b+",
+    "ab+",
+    "o-",
+    "a-",
+    "b-",
+    "ab-",
+    "blood",
+    "donate",
+    "vaccines",
+    "covidsos"
+]
 
 
 def retrieve_last_seen_id(file_name):
@@ -44,16 +85,23 @@ def reply_to_tweet():
         store_last_seen_id(last_seen_id, FILE_NAME)
         singleMention.retweet()
 
+
 reply_to_tweet()
 
-for tweet in tweepy.Cursor(api.search, q='Covid').items(50000):
+for tweet in tweepy.Cursor(api.search, q="covid -filter:retweets").items(50000):
+    tweet_text = tweet._json['text']
+    found = True
     try:
-        print('\nFound by @' + tweet.user.screen_name)
+        for keyword in keywords:
+            if found:
+                if keyword in tweet_text.lower():
+                    found = False
+                    print("\nFound by @" + tweet.user.screen_name + tweet_text)
 
-        tweet.retweet()
-        print('Retweeted')
+                    # tweet.retweet()
+                    print("Retweeted")
 
-        time.sleep(10)
+                    time.sleep(1)
 
     except tweepy.TweepError as error:
         print(error.reason)

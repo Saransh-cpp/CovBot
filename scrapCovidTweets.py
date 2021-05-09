@@ -73,7 +73,7 @@ def reply_to_tweet():
         )  # printing all my tweets
         last_seen_id = singleMention.id
         store_last_seen_id(last_seen_id, FILE_NAME)
-        singleMention.retweet()
+#         singleMention.retweet()
 
 
 reply_to_tweet()

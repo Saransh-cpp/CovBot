@@ -13,8 +13,8 @@ auth.set_access_token(access_token, access_token_secret)
 
 api = tweepy.API(
     auth, 
-    # wait_on_rate_limit=True, 
-    # wait_on_rate_limit_notify=True
+    wait_on_rate_limit=True, 
+    wait_on_rate_limit_notify=True
     )
 
 FILE_NAME = "lastSeenId.txt"
@@ -25,6 +25,9 @@ keywords = [
     "oxygen",
     "icu",
     "cylinder",
+    "oximeter",
+    "oxygen can",
+    "refilling",
     "urgent",
     "required",
     "available",
@@ -76,22 +79,28 @@ def reply_to_tweet():
 #         singleMention.retweet()
 
 
-reply_to_tweet()
+# reply_to_tweet()
 
 for tweet in tweepy.Cursor(api.search, q="covid -filter:retweets", lang='en').items(50000):
+    # print(tweet._json['entities'].keys())
     tweet_text = tweet._json['text']
     found = True
+    try:
+        tweet_url = tweet._json['entities']['urls'][0]['url']
+    except IndexError:
+        tweet_url = ""
+
     try:
         for keyword in keywords:
             if found:
                 if keyword in tweet_text.lower():
                     found = False
-                    print("\nFound by @" + tweet.user.screen_name + " " + tweet_text)
+                    print("\nFound by @" + tweet.user.screen_name + " " + tweet_text + " url- " + tweet._json['entities']['urls'][0]['url'])
 
                     # tweet.retweet()
                     print("Retweeted")
 
-                    time.sleep(300)
+                    time.sleep(5)
 
     except tweepy.TweepError as error:
         print(error.reason)
